@@ -3,6 +3,7 @@
 import { useCart } from '../../Context/CartContext';
 import { useState, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { Link } from 'react-router-dom';
 
 function CardPizza({ id, name, price, ingredients, img, desc }) {
     const { cart, addToCart } = useCart();
@@ -11,13 +12,17 @@ function CardPizza({ id, name, price, ingredients, img, desc }) {
     const [added, setAdded] = useState(false);
 
         useEffect(() => {
-            const exists = cart.some(item => item.cartId === localId.current);
+            // Buscar por ID de pizza para detectar si ya existe (desde cualquier componente)
+            const exists = cart.some(item => item.id === id);
             setAdded(exists);
-        }, [cart]);
+        }, [cart, id]);
 
         const handleAdd = () => {
             if (!added) {
-                addToCart({ ...pizza, cartId: localId.current });
+                addToCart({ 
+                    ...pizza, 
+                    cartId: `${id}-${Date.now()}` // ID único pero basado en la pizza
+                });
             }
         };
 
@@ -37,9 +42,12 @@ function CardPizza({ id, name, price, ingredients, img, desc }) {
                     <p className="text-lg font-bold text-green-700">Precio: {price}</p>
                 </div>
                 <div className="px-6 pb-4 flex justify-center mt-auto">
-                    <button className="bg-white text-black hover:bg-blue-600 font-bold py-2 px-4 rounded m-2 border-[2px]">
+                    <Link 
+                        to={`/pizza/${id}`}
+                        className="bg-white text-black hover:bg-blue-600 font-bold py-2 px-4 rounded m-2 border-[2px] text-center no-underline"
+                    >
                         Ver Más 👀
-                    </button>
+                    </Link>
                                 <button
                                     className={
                                         added
@@ -49,7 +57,7 @@ function CardPizza({ id, name, price, ingredients, img, desc }) {
                                     onClick={handleAdd}
                                     disabled={added}
                                 >
-                                    Añadir 🛒
+                                    {added ? "Añadido 🍕" : "Añadir 🛒"}
                                 </button>
                 </div>
             </div>

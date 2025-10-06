@@ -1,17 +1,21 @@
-import React  from "react"
-import {useState} from "react"
+import React from "react"
+import { useState } from "react"
+import { useUser } from '../../Context/UserContext'
+import { useNavigate } from 'react-router-dom'
 
 function RegisterPage() {
-
+    const { login } = useUser();
+    const navigate = useNavigate();
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState("")
+    const [loading, setLoading] = useState(false)
 
      function validateEmail(email) {
         // Validación básica de email
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
     }
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault()
 
         if (!validateEmail(email)) {
@@ -22,9 +26,18 @@ function RegisterPage() {
         if (password.length < 6) {
             alert("La contraseña debe tener al menos 6 caracteres")
             return
-        } 
+        }
 
-        alert("¡Enhorabuena! has logeado exitosamente")
+        setLoading(true);
+        const result = await login(email, password);
+        setLoading(false);
+
+        if (result.success) {
+            alert("¡Enhorabuena! has logeado exitosamente")
+            navigate('/');
+        } else {
+            alert(`Error: ${result.error}`);
+        }
     }
 
 
@@ -51,7 +64,12 @@ function RegisterPage() {
                 
                 />
                 
-                <button className = "border mt-5 p-1 bg-white ">Login</button>
+                <button 
+                    className="border mt-5 p-1 bg-white" 
+                    disabled={loading}
+                >
+                    {loading ? 'Ingresando...' : 'Login'}
+                </button>
             </form>
 
         </div>

@@ -1,8 +1,19 @@
 import { useCart } from '../../Context/CartContext';
+import { useUser } from '../../Context/UserContext';
+import { useState } from 'react';
 
 function Cart() {
     const { cart, updateQuantity } = useCart();
+    const { token } = useUser();
+    const [paid, setPaid] = useState(false);
     const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+    const handlePagar = () => {
+        if (token) {
+            alert("Enhorabuena! que te aprovechen las pizzas Compaaaa!");
+            setPaid(true);
+        }
+    };
 
     return (
         <div className="max-w-md mx-auto bg-white rounded shadow p-6 mt-8">
@@ -32,7 +43,16 @@ function Cart() {
             <div className="font-bold text-xl mt-6 mb-4">
                 Total: ${total.toLocaleString()}
             </div>
-            <button className="bg-black text-white px-4 py-2 rounded">Pagar</button>
+            <button 
+                className={`px-4 py-2 rounded ${
+                    paid ? 'bg-green-600 text-white' :
+                    token ? 'bg-black text-white hover:bg-gray-800' : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                }`}
+                disabled={!token || paid}
+                onClick={handlePagar}
+            >
+                {paid ? 'Pagado 🍕' : 'Pagar'}
+            </button>
         </div>
     );
 }

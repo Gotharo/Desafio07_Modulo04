@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../../Context/CartContext';
-import { useState } from 'react';
+import { useUser } from '../../Context/UserContext';
 import logo from "../../Assets/Img/Logo_gotharo.png";
 
 function NavBar() {
     const { cart } = useCart();
+    const { token, logout } = useUser();
     const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const formateado = total.toLocaleString('es-CL');
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     return (
         <nav className="w-100vw relative bg-grey-400 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-white/10">
@@ -33,9 +33,10 @@ function NavBar() {
                             <div className="flex space-x-4">
                                 <Link to="/" className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white"> Home </Link>
 
-                                {isLoggedIn ? (
+                                {token ? (
                                     <>
                                         <Link to="/profile" className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">🔓 Profile</Link>
+                                        <button onClick={logout} className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">🔓 Logout</button>
                                     </>
                                 ) : (
                                     <>
@@ -47,13 +48,6 @@ function NavBar() {
                         </div>
                     </div>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                        <p className="mr-2 text-white " >Token</p>
-                        <input
-                            type="checkbox"
-                            checked={isLoggedIn}
-                            onChange={(e) => setIsLoggedIn(e.target.checked)}
-                            className="form-checkbox h-5 w-5 text-yellow-500"
-                        />
 
                         <Link to="/cart" className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white">
                             🛒 Total: {formateado}

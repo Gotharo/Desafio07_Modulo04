@@ -7,29 +7,34 @@ import LoginPage from "./Components/Pages/LoginPage";
 import Pizza from "./Components/Pages/Pizza";
 import Profile from "./Components/Views/Profile";
 import NotFound from "./Components/Views/NotFound";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import PublicRoute from "./Components/PublicRoute";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./Context/CartContext";
+import { UserProvider } from "./Context/UserContext";
 
 function App() {
     return (
-        <CartProvider>
-            <div className="min-h-screen flex flex-col">
-                <BrowserRouter>
+        <UserProvider>
+            <CartProvider>
+                <div className="min-h-screen flex flex-col">
+                    <BrowserRouter>
                     <NavBar />
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/cart" element={<Cart />} />
-                        <Route path="/register" element={<RegisterPage />} />
-                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
+                        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
                         <Route path="/pizza/:pizzaId" element={<Pizza />} />
-                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                         <Route path="/404" element={<NotFound />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
-                    <Footer />
-                </BrowserRouter>
-            </div>
-        </CartProvider>
+                        <Footer />
+                    </BrowserRouter>
+                </div>
+            </CartProvider>
+        </UserProvider>
     );
 }
 
